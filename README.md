@@ -5,6 +5,7 @@
 This project implements an end-to-end multi-city weather forecasting system using:
 
 - **Open-Meteo API** (data source)
+  For API details, see the [Open-Meteo API Documentation](https://open-meteo.com/en/docs).
 - **Apache Airflow** (orchestration)
 - **Snowflake** (data warehouse + ML forecasting)
 
