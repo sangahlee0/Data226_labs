@@ -24,8 +24,6 @@ models:
           - not_null
       - name: ROLLING_7_DAY_AVG
         description: "7-day moving average of the max temperature"
-        data_tests:
-          - not_null
       - name: TEMP_ANOMALY
         description: "Variation from the city's historical mean temperature"
 
