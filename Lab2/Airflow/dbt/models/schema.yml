@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: session_summary
+    description: "Analytics model for session data"
+    columns:
+      - name: sessionId
+        description: "Unique identifier for each stock price record"
+        data_tests:
+          - unique
+          - not_null
+
+  # For LAB 2 WEATHER
+  - name: weather_metrics
+    description: "Transformed weather data to use for visulization and analysis"
+    columns:
+      - name: CITY
+        description: "City associated with the weather record"
+        data_tests:
+          - not_null
+      - name: DATE
+        description: "Date of the weather observation"
+        data_tests:
+          - not_null
+      - name: ROLLING_7_DAY_AVG
+        description: "7-day moving average of the max temperature"
+        data_tests:
+          - not_null
+      - name: TEMP_ANOMALY
+        description: "Variation from the city's historical mean temperature"
+
