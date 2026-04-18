@@ -83,12 +83,15 @@ def load(target_table, records):
             temp_min FLOAT,
             temp_mean FLOAT,
             precipitation FLOAT,
-            weather_code VARCHAR(3),
+            weather_code VARCHAR(10),
             city VARCHAR(100),
             PRIMARY KEY (latitude, longitude, date, city)
             );
         """)
-        cur.execute(f"""DELETE FROM {target_table}""")
+        # cur.execute(f"""DELETE FROM {target_table}""")
+        # Above will have only last city that remains and we want all of them
+        city = records[0]['city']
+        cur.execute(f"DELETE FROM {target_table} WHERE city = %s", (city,))
 
         insert_sql = f"""INSERT INTO {target_table} (latitude, longitude, date, temp_max, temp_min, temp_mean, precipitation, weather_code, city) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"""
                 
@@ -100,7 +103,7 @@ def load(target_table, records):
                 r['temp_min'],
                 r['temp_mean'],
                 r['precipitation'],
-                str(r['weather_code']),
+                None if r['weather_code'] is None else str(r['weather_code']),
                 r['city']
             )
             for r in records
