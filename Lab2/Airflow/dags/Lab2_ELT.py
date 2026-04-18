@@ -47,21 +47,6 @@ with DAG(
     }
 }
 ) as dag:
-    # dbt_run = BashOperator(
-    #     task_id="dbt_run",
-    #     bash_command=f"/home/airflow/.local/bin/dbt run --profiles-dir {DBT_PROJECT_DIR} --project-dir {DBT_PROJECT_DIR}",
-    # )
-
-    # dbt_test = BashOperator(
-    #     task_id="dbt_test",
-    #     bash_command=f"/home/airflow/.local/bin/dbt test --profiles-dir {DBT_PROJECT_DIR} --project-dir {DBT_PROJECT_DIR}",
-    # )
-
-    # dbt_snapshot = BashOperator(
-    #     task_id="dbt_snapshot",
-    #     bash_command=f"/home/airflow/.local/bin/dbt snapshot --profiles-dir {DBT_PROJECT_DIR} --project-dir {DBT_PROJECT_DIR}",
-    # )
-
     dbt_run = BashOperator(
     task_id="dbt_run",
     bash_command=f"/home/airflow/.local/bin/dbt run --profiles-dir {DBT_PROJECT_DIR} --project-dir {DBT_PROJECT_DIR}",
