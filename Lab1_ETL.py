@@ -4,6 +4,8 @@ from airflow.models import Variable
 from airflow.decorators import task
 from airflow.providers.snowflake.hooks.snowflake import SnowflakeHook
 
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator  # For Lab 2 trigger
+
 from datetime import timedelta
 from datetime import datetime
 import snowflake.connector
@@ -83,12 +85,15 @@ def load(target_table, records):
             temp_min FLOAT,
             temp_mean FLOAT,
             precipitation FLOAT,
-            weather_code VARCHAR(3),
+            weather_code VARCHAR(10),
             city VARCHAR(100),
             PRIMARY KEY (latitude, longitude, date, city)
             );
         """)
-        cur.execute(f"""DELETE FROM {target_table}""")
+        # cur.execute(f"""DELETE FROM {target_table}""")
+        # Above will have only last city that remains and we want all of them
+        city = records[0]['city']
+        cur.execute(f"DELETE FROM {target_table} WHERE city = %s", (city,))
 
         insert_sql = f"""INSERT INTO {target_table} (latitude, longitude, date, temp_max, temp_min, temp_mean, precipitation, weather_code, city) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);"""
                 
@@ -100,7 +105,7 @@ def load(target_table, records):
                 r['temp_min'],
                 r['temp_mean'],
                 r['precipitation'],
-                str(r['weather_code']),
+                None if r['weather_code'] is None else str(r['weather_code']),
                 r['city']
             )
             for r in records
@@ -130,6 +135,16 @@ with DAG(
     locations = Variable.get("MULTI_LOCATIONS", deserialize_json=True)
     target_table = "raw.lab1etl"
 
+    # Define the trigger so Airflow knows what it is
+    trigger_lab2 = TriggerDagRunOperator(
+        task_id="trigger_lab2_elt",
+        trigger_dag_id="LAB_2_ELT",
+        wait_for_completion=False
+    )
+
+    last_task = None
+    load_tasks = []
+
     for l in locations:
         lat = l["lat"]
         lon = l["lon"]
@@ -141,4 +156,13 @@ with DAG(
         raw_data = extract.override(task_id=f"extract_{city_id}")(lat, lon)
         data = transform.override(task_id=f"transform_{city_id}")(raw_data, lat, lon, city)
         #load(cur, target_table, data)
-        load.override(task_id=f"load_{city_id}")(target_table, data)
+        #load.override(task_id=f"load_{city_id}")(target_table, data)
+
+        load_task = load.override(task_id=f"load_{city_id}")(target_table, data)
+        
+        if last_task:
+            last_task >> raw_data  # This makes the next city wait for the previous one
+        last_task = load_task
+
+    # Now trigger Lab 2 after the very last load finishes
+    last_task >> trigger_lab2
