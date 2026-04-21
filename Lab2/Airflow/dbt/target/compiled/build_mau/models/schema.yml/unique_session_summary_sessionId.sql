@@ -6,7 +6,7 @@ select
     sessionId as unique_field,
     count(*) as n_records
 
-from USER_DB_COBRA.analytics.session_summary
+from USER_DB_GECKO.analytics.session_summary
 where sessionId is not null
 group by sessionId
 having count(*) > 1

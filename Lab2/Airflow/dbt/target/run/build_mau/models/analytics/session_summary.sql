@@ -2,19 +2,19 @@
   
     
 
-        create or replace transient table USER_DB_COBRA.analytics.session_summary
+        create or replace transient table USER_DB_GECKO.analytics.session_summary
          as
         (WITH  __dbt__cte__user_session_channel as (
 SELECT
     userId,
     sessionId,
     channel
-FROM USER_DB_COBRA.raw.user_session_channel
+FROM USER_DB_GECKO.raw.user_session_channel
 ),  __dbt__cte__session_timestamp as (
 SELECT
     sessionId,
     ts
-FROM USER_DB_COBRA.raw.session_timestamp
+FROM USER_DB_GECKO.raw.session_timestamp
 ), u AS (
     SELECT * FROM __dbt__cte__user_session_channel
 ), st AS (

@@ -2,7 +2,7 @@
   
     
 
-        create or replace transient table USER_DB_COBRA.analytics.weather_metrics
+        create or replace transient table USER_DB_GECKO.analytics.weather_metrics
          as
         (
 
@@ -32,7 +32,7 @@ SELECT
     -- Days with 0 rain to use for visualization
     CASE WHEN PRECIPITATION = 0 THEN 1 ELSE 0 END AS is_dry_day
 
-FROM USER_DB_COBRA.raw.lab1etl
+FROM USER_DB_GECKO.raw.lab1etl
         );
       
   
