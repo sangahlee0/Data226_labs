@@ -1,4 +1,4 @@
 SELECT
     sessionId,
     ts
-FROM USER_DB_GECKO.raw.session_timestamp
+FROM USER_DB_COBRA.raw.session_timestamp
